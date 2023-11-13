@@ -1,0 +1,89 @@
+import array
+import pygame
+import random
+
+class Case:
+    def __init__(self, x, y, couleur = (255,255,255)):
+        self.x = x
+        self.y = y
+        self.couleur = couleur
+
+    def afficher(self, surface):
+        pygame.draw.rect(surface, self.couleur, pygame.Rect(self.x*20, self.y*20, 20, 20))
+        pygame.display.flip()
+
+class Serpent(Case):
+    def __init__(self, x, y):
+        super().__init__(x, y, (0,255,0)) # vert
+
+class Pomme(Case):
+    def __init__(self, x, y):
+        super().__init__(x, y, (255,0,0)) # rouge
+
+    def afficher(self, surface):
+        super().afficher(surface)
+
+
+class Frontiere(Case):
+    def __init__(self, x, y):
+        super().__init__(x, y, (100,100,100)) # gris
+ 
+
+class Grille():
+    def __init__(self, hauteur, largeur):
+        self.grille = [[Case(x,y) for x in range(largeur)] for y in range(hauteur)]
+        sousliste = random.choice(self.grille)
+        case = random.choice(sousliste)
+        x = case.x
+        y = case.y
+        self.grille[y][x] = Serpent(x,y)
+        
+    def afficher(self, surface):
+        for sousliste in self.grille:
+            for case in sousliste:
+                case.afficher(surface)
+    
+    def ajouterPomme (self):
+        sousliste = random.choice(self.grille)
+        case = random.choice(sousliste)
+
+        while isinstance(case, Serpent):
+            sousliste = random.choice(self.grille)
+            case = random.choice(sousliste)
+
+        x = case.x
+        y = case.y
+        self.grille[y][x] = Pomme(x,y)
+
+    
+    def deplacer_serpent_haut():
+        # il faudrait qu'on sache ou est le serpent
+        # position_serpent = [(x0,y0), (x1,y1), (x2,y2)]
+        # pourquoi pas utiliser un object serpent
+
+def main():
+    pygame.init()
+    surface = pygame.display.set_mode((400,400))
+
+    
+    grille = Grille(10, 10)
+    grille.ajouterPomme()
+    grille.afficher(surface)
+
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                exit()
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_UP:
+                    print("haut")
+                    # grille.deplacer_serpent_vers_le_haut()
+                if event.key == pygame.K_DOWN:
+                    print("bas")
+                if event.key == pygame.K_LEFT:
+                    print("gauche")
+                if event.key == pygame.K_RIGHT:
+                    print("droite")
+
+main()
